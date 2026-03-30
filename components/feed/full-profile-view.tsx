@@ -54,6 +54,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useFeedStore, type UserProfile, type CommunityMember, type Post, type PostAuthor } from '@/lib/feed-store'
 import { useCurrentUser } from './user-switcher'
+import { useRouter } from 'next/navigation'
 
 interface FullProfileViewProps {
   profile: UserProfile | CommunityMember | PostAuthor
@@ -63,6 +64,7 @@ interface FullProfileViewProps {
 export function FullProfileView({ profile, onClose }: FullProfileViewProps) {
   const { userProfile, updateProfile, posts, followUser, unfollowUser, communityMembers } = useFeedStore()
   const { currentUser } = useCurrentUser()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('posts')
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editForm, setEditForm] = useState<Partial<UserProfile>>({})
@@ -172,9 +174,9 @@ export function FullProfileView({ profile, onClose }: FullProfileViewProps) {
         <div className="max-w-3xl mx-auto pb-20">
           {/* Cover Image */}
           <div className="h-40 sm:h-52 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/5 relative">
-            {'coverImage' in fullProfile && fullProfile.coverImage && (
+            {('coverImage' in fullProfile) && (fullProfile as any).coverImage && (
               <img 
-                src={fullProfile.coverImage} 
+                src={(fullProfile as any).coverImage} 
                 alt="" 
                 className="w-full h-full object-cover"
               />
@@ -229,7 +231,11 @@ export function FullProfileView({ profile, onClose }: FullProfileViewProps) {
                   >
                     {isFollowing ? 'Following' : 'Follow'}
                   </Button>
-                  <Button variant="outline" size="icon">
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={() => router.push(`/messages?userId=${fullProfile.id}`)}
+                  >
                     <MessageCircle className="h-4 w-4" />
                   </Button>
                   <Button variant="outline" size="icon">
@@ -286,26 +292,26 @@ export function FullProfileView({ profile, onClose }: FullProfileViewProps) {
             </div>
 
             {/* Additional Info */}
-            {'profession' in fullProfile && (fullProfile.profession || fullProfile.education || fullProfile.languages) && (
+            {('profession' in fullProfile) && ((fullProfile as any).profession || (fullProfile as any).education || (fullProfile as any).languages) && (
               <div className="space-y-3 mb-6">
                 <h3 className="font-semibold">About</h3>
                 <div className="space-y-2 text-sm">
-                  {fullProfile.profession && (
+                  {(fullProfile as any).profession && (
                     <div className="flex items-center gap-3 text-muted-foreground">
                       <Briefcase className="h-4 w-4 flex-shrink-0" />
-                      <span>{fullProfile.profession}</span>
+                      <span>{(fullProfile as any).profession}</span>
                     </div>
                   )}
-                  {fullProfile.education && (
+                  {(fullProfile as any).education && (
                     <div className="flex items-center gap-3 text-muted-foreground">
                       <GraduationCap className="h-4 w-4 flex-shrink-0" />
-                      <span>{fullProfile.education}</span>
+                      <span>{(fullProfile as any).education}</span>
                     </div>
                   )}
-                  {fullProfile.languages && fullProfile.languages.length > 0 && (
+                  {(fullProfile as any).languages && (fullProfile as any).languages.length > 0 && (
                     <div className="flex items-center gap-3 text-muted-foreground">
                       <Languages className="h-4 w-4 flex-shrink-0" />
-                      <span>{fullProfile.languages.join(', ')}</span>
+                      <span>{(fullProfile as any).languages.join(', ')}</span>
                     </div>
                   )}
                 </div>

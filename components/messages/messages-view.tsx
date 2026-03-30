@@ -44,6 +44,7 @@ import { toast } from "sonner";
 import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Conversation {
   id: string;
@@ -116,6 +117,8 @@ export function MessagesView() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Fetch conversations
   const fetchConversations = useCallback(async () => {
@@ -127,12 +130,14 @@ export function MessagesView() {
       
       if (data.conversations) {
         setConversations(data.conversations);
+        return data.conversations;
       }
     } catch (error) {
       console.error("Error fetching conversations:", error);
     } finally {
       setLoading(false);
     }
+    return [];
   }, [user]);
 
   // Fetch messages for selected conversation
@@ -154,7 +159,46 @@ export function MessagesView() {
 
   // Set up realtime subscriptions
   useEffect(() => {
-    fetchConversations();
+    const init = async () => {
+      const convos = await fetchConversations();
+      
+      // Handle URL userId routing for direct messages
+      const urlUserId = searchParams.get('userId');
+      if (urlUserId && user && convos) {
+        // Find existing conversation with this user
+        const existingConvo = convos.find((c: any) => 
+          c.type === 'direct' && c.participants.some((p: any) => p.id === urlUserId)
+        );
+
+        if (existingConvo) {
+          handleSelectConversation(existingConvo);
+        } else {
+          // Check if user exists and create a conversation
+          try {
+            const res = await fetch("/api/conversations", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                type: "direct",
+                participant_ids: [urlUserId],
+              }),
+            });
+            const data = await res.json();
+            if (data.conversation) {
+              await fetchConversations();
+              handleSelectConversation(data.conversation);
+            }
+          } catch (e) {
+            console.error("Auto-start chat failed:", e);
+          }
+        }
+        
+        // Remove param from URL
+        router.replace('/messages');
+      }
+    };
+
+    init();
 
     if (!user) return;
 
@@ -164,7 +208,7 @@ export function MessagesView() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
-        async (payload) => {
+        async (payload: any) => {
           const newMsg = payload.new as any;
           
           // If we have this conversation selected, add the message

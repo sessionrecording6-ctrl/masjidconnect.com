@@ -94,6 +94,9 @@ export interface Post {
   mosque_id: string | null;
   content: string;
   image_url: string | null;
+  post_type?: string;
+  category?: string;
+  metadata?: any;
   likes_count: number;
   comments_count: number;
   is_published: boolean;

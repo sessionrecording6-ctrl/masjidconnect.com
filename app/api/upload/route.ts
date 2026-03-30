@@ -1,6 +1,6 @@
-import { put } from '@vercel/blob'
 import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,23 +24,48 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid file type. Only images are allowed.' }, { status: 400 })
     }
 
-    // Validate file size (max 5MB)
+    // Validate size (max 5MB)
     const maxSize = 5 * 1024 * 1024
     if (file.size > maxSize) {
       return NextResponse.json({ error: 'File too large. Maximum size is 5MB.' }, { status: 400 })
     }
 
-    // Generate unique filename with user ID prefix for organization
+    // Create Admin Client for bypassing RLS during Bucket setup/upload
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    // Ensure attachments bucket exists
+    await supabaseAdmin.storage.createBucket('attachments', {
+      public: true,
+      fileSizeLimit: maxSize
+    }).catch(() => {}) // Ignore if it exists
+    
+    // Generate unique filename
     const timestamp = Date.now()
     const extension = file.name.split('.').pop()
-    const filename = `uploads/${user.id}/${timestamp}.${extension}`
+    const filename = `${user.id}/${timestamp}.${extension}`
 
-    // Use 'private' access since the blob store is configured as private
-    const blob = await put(filename, file, {
-      access: 'private',
-    })
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      .from('attachments')
+      .upload(filename, file, {
+        cacheControl: '3600',
+        upsert: false
+      })
 
-    return NextResponse.json({ url: blob.url, pathname: blob.pathname })
+    if (uploadError) {
+      console.error('Supabase storage upload error:', uploadError)
+      return NextResponse.json({ error: 'Failed to upload to storage: ' + uploadError.message }, { status: 500 })
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabaseAdmin.storage
+      .from('attachments')
+      .getPublicUrl(uploadData.path)
+
+    return NextResponse.json({ url: publicUrl, pathname: uploadData.path })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })

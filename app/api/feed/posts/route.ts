@@ -22,15 +22,15 @@ export async function GET(request: Request) {
     // Get posts with user and interaction data
     const { data: posts, error: postsError } = await supabase
       .from('posts')
-      .select(
-        `
+      .select(`
         id,
         content,
         image_url,
+        post_type,
+        category,
+        metadata,
         created_at,
         updated_at,
-        likes_count,
-        comments_count,
         author_id,
         profiles:author_id(
           id,
@@ -38,9 +38,10 @@ export async function GET(request: Request) {
           avatar_url,
           profession,
           role
-        )
-        `
-      )
+        ),
+        post_likes(count),
+        post_comments(count)
+      `)
       .eq('is_published', true)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -50,9 +51,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: postsError.message }, { status: 500 })
     }
 
-    // Get user's likes for these posts
+    const formattedPosts = posts?.map((post: any) => {
+      const p = { ...post }
+      p.likes_count = p.post_likes?.[0]?.count || 0
+      p.comments_count = p.post_comments?.[0]?.count || 0
+      return p
+    }) || []
+
+    // Get user's likes and bookmarks for these posts
     const postIds = posts?.map(p => p.id) || []
     let userLikes: string[] = []
+    let userBookmarks: string[] = []
 
     if (postIds.length > 0) {
       const { data: likes, error: likesError } = await supabase
@@ -64,11 +73,22 @@ export async function GET(request: Request) {
       if (!likesError) {
         userLikes = likes?.map(l => l.post_id) || []
       }
+
+      const { data: bookmarks, error: bookmarksError } = await supabase
+        .from('post_bookmarks')
+        .select('post_id')
+        .in('post_id', postIds)
+        .eq('user_id', user.id)
+
+      if (!bookmarksError) {
+        userBookmarks = bookmarks?.map(b => b.post_id) || []
+      }
     }
 
     return NextResponse.json({
-      data: posts || [],
+      data: formattedPosts,
       userLikes,
+      userBookmarks,
     })
   } catch (error) {
     console.error('Error:', error)
