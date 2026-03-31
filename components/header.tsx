@@ -75,13 +75,13 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3 lg:px-8">
+        <div className="flex items-center gap-4 md:gap-8">
+          <Link href="/" className="flex items-center gap-2 group transition-all active:scale-95">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 group-hover:shadow-primary/30 transition-all">
               <MosqueIcon className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-semibold tracking-tight">
+            <span className="text-xl font-bold tracking-tight">
               Mosque<span className="text-primary">Connect</span>
             </span>
           </Link>
@@ -96,10 +96,10 @@ export function Header() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all",
                     isActive 
-                      ? "bg-primary/10 text-primary" 
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "bg-primary/10 text-primary shadow-sm" 
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-y-[-1px]"
                   )}
                 >
                   <item.icon className="h-4 w-4" />
@@ -110,19 +110,19 @@ export function Header() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Role-based navigation */}
           {mounted && user && isShura && (
-            <Link href="/shura" className="hidden sm:block">
-              <Button variant="outline" size="sm" className="gap-2 border-teal-600 text-teal-600 hover:bg-teal-50 hover:text-teal-700 dark:border-teal-500 dark:text-teal-500 dark:hover:bg-teal-950 dark:hover:text-teal-400">
+            <Link href="/shura" className="hidden md:block">
+              <Button variant="outline" size="sm" className="gap-2 border-teal-600/50 text-teal-600 hover:bg-teal-50 hover:text-teal-700 dark:border-teal-500/50 dark:text-teal-500 dark:hover:bg-teal-950 dark:hover:text-teal-400 rounded-xl">
                 <Shield className="h-4 w-4" />
                 Shura
               </Button>
             </Link>
           )}
           {mounted && user && isAdmin && (
-            <Link href="/admin" className="hidden sm:block">
-              <Button variant="outline" size="sm" className="gap-2">
+            <Link href="/admin" className="hidden md:block">
+              <Button variant="outline" size="sm" className="gap-2 rounded-xl border-border/60">
                 <LayoutDashboard className="h-4 w-4" />
                 Admin
               </Button>
@@ -134,20 +134,20 @@ export function Header() {
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted/80">
                   <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                   <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                   <span className="sr-only">Toggle theme</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
+              <DropdownMenuContent align="end" className="rounded-xl border-border/60">
+                <DropdownMenuItem onClick={() => setTheme("light")} className="rounded-lg">
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <DropdownMenuItem onClick={() => setTheme("dark")} className="rounded-lg">
                   Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
+                <DropdownMenuItem onClick={() => setTheme("system")} className="rounded-lg">
                   System
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -160,39 +160,45 @@ export function Header() {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full ring-offset-background transition-all hover:ring-2 hover:ring-primary/20">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || 'User'} />
-                        <AvatarFallback className="text-xs">
+                        <AvatarFallback className="text-xs bg-primary/5 text-primary font-bold">
                           {getInitials(profile?.full_name)}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <div className="px-2 py-1.5">
-                      <p className="text-sm font-medium">{profile?.full_name || 'User'}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                      <p className="text-xs text-muted-foreground capitalize mt-1">
-                        Role: {profile?.role || 'member'}
+                  <DropdownMenuContent align="end" className="w-60 rounded-2xl border-border/60 p-2 shadow-xl">
+                    <div className="px-3 py-3 mb-1 bg-muted/30 rounded-xl">
+                      <p className="text-sm font-bold truncate">{profile?.full_name || 'User'}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-0.5 opacity-70">
+                        {profile?.role || 'Member'} Role
                       </p>
+                      <p className="text-xs text-muted-foreground truncate mt-1.5 opacity-80">{user.email}</p>
                     </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile" className="flex items-center">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
+                    <DropdownMenuSeparator className="bg-border/40" />
+                    <DropdownMenuItem asChild className="rounded-lg my-0.5">
+                      <Link href="/profile" className="flex items-center cursor-pointer">
+                        <User className="mr-3 h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">My Profile</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/settings" className="flex items-center">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                    <DropdownMenuItem asChild className="rounded-lg my-0.5">
+                      <Link href="/messages" className="flex items-center cursor-pointer md:hidden">
+                        <MessageSquare className="mr-3 h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">My Messages</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                      <LogOut className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem asChild className="rounded-lg my-0.5">
+                      <Link href="/settings" className="flex items-center cursor-pointer">
+                        <Settings className="mr-3 h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-border/40" />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg font-bold">
+                      <LogOut className="mr-3 h-4 w-4" />
                       Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -200,12 +206,12 @@ export function Header() {
               ) : (
                 <div className="hidden sm:flex sm:gap-2">
                   <Link href="/auth/login">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="rounded-xl font-medium px-4">
                       Sign In
                     </Button>
                   </Link>
                   <Link href="/auth/sign-up">
-                    <Button size="sm">
+                    <Button size="sm" className="rounded-xl font-bold px-5 shadow-lg shadow-primary/20">
                       Sign Up
                     </Button>
                   </Link>
@@ -217,13 +223,13 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className="lg:hidden h-10 w-10 rounded-xl active:bg-muted transition-all"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-6 w-6" />
             )}
             <span className="sr-only">Toggle menu</span>
           </Button>
@@ -232,8 +238,8 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden">
-          <div className="space-y-1 px-4 pb-4">
+        <div className="lg:hidden animate-in slide-in-from-top-2 duration-200">
+          <div className="space-y-1.5 px-4 pb-6 pt-2 bg-background border-b border-border/40 shadow-2xl">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               if (item.requiresAuth && !user) return null
@@ -243,55 +249,64 @@ export function Header() {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-4 rounded-xl px-4 py-3 text-base font-semibold transition-all active:scale-95",
                     isActive 
-                      ? "bg-primary/10 text-primary" 
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" 
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className={cn("h-5 w-5", isActive ? "text-primary-foreground" : "text-primary/70")} />
                   {item.name}
                 </Link>
               )
             })}
-            {user && isShura && (
-              <Link
-                href="/shura"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-950"
-              >
-                <Shield className="h-4 w-4" />
-                Shura Panel
-              </Link>
+            
+            <div className="my-4 border-t border-border/40" />
+
+            {user && (isShura || isAdmin) && (
+              <div className="space-y-1.5 mb-4">
+                <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Management</p>
+                {isShura && (
+                  <Link
+                    href="/shura"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-4 rounded-xl px-4 py-3 text-base font-semibold text-teal-600 bg-teal-50/50 dark:bg-teal-950/30 active:scale-95 transition-all"
+                  >
+                    <Shield className="h-5 w-5" />
+                    Shura Panel
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-4 rounded-xl px-4 py-3 text-base font-semibold text-primary bg-primary/5 active:scale-95 transition-all"
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    Admin Dashboard
+                  </Link>
+                )}
+              </div>
             )}
-            {user && isAdmin && (
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <LayoutDashboard className="h-4 w-4" />
-                Admin Dashboard
-              </Link>
-            )}
-            <div className="border-t pt-2 mt-2">
+
+            <div className="space-y-2">
               {user ? (
                 <button
                   onClick={() => {
                     handleSignOut()
                     setMobileMenuOpen(false)
                   }}
-                  className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
+                  className="flex w-full items-center gap-4 rounded-xl px-4 py-4 text-base font-bold text-destructive bg-destructive/5 active:scale-95 transition-all border border-destructive/10"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-5 w-5" />
                   Sign Out
                 </button>
               ) : (
-                <>
+                <div className="grid grid-cols-2 gap-3 pt-2">
                   <Link
                     href="/auth/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-muted-foreground bg-muted hover:bg-muted/80 active:scale-95 transition-all"
                   >
                     <LogIn className="h-4 w-4" />
                     Sign In
@@ -299,12 +314,12 @@ export function Header() {
                   <Link
                     href="/auth/sign-up"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10"
+                    className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-primary-foreground bg-primary shadow-lg shadow-primary/20 active:scale-95 transition-all"
                   >
                     <User className="h-4 w-4" />
                     Sign Up
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>

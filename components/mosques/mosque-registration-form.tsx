@@ -99,41 +99,41 @@ export function MosqueRegistrationForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pb-12">
-      <form onSubmit={onSubmit} className="space-y-6">
+    <div className="max-w-4xl mx-auto pb-12 px-4 sm:px-0">
+      <form onSubmit={onSubmit} className="space-y-4 md:space-y-6">
         {/* Step 1: Basic Identity & Contact (Balanced Columns) */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:gap-6 md:grid-cols-2 text-base sm:text-sm leading-relaxed">
           {/* Card 1: Mosque Identity */}
           <Card className="border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="pb-4 bg-muted/30">
+            <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 bg-muted/30">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary shadow-inner">
                   <Building2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Mosque Identity</CardTitle>
-                  <CardDescription className="text-xs">Primary identification details</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">Mosque Identity</CardTitle>
+                  <CardDescription className="text-[10px] sm:text-xs">Primary identification details</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
+            <CardContent className="p-4 sm:p-6 pt-4 sm:pt-6 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Mosque Name</Label>
-                <Input id="name" name="name" placeholder="e.g. Al-Noor Islamic Center" required className="bg-muted/20 border-border/40 focus:bg-background transition-colors" />
+                <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Mosque Name</Label>
+                <Input id="name" name="name" placeholder="e.g. Al-Noor Islamic Center" required className="h-11 sm:h-10 text-base sm:text-sm bg-muted/20 border-border/40 focus:bg-background transition-colors" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="capacity" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Capacity</Label>
+                  <Label htmlFor="capacity" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Capacity</Label>
                   <div className="relative">
-                    <Users className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/60" />
-                    <Input id="capacity" name="capacity" type="number" className="pl-9 bg-muted/20 border-border/40" placeholder="500" />
+                    <Users className="absolute left-3 top-3.5 sm:top-3 h-4 w-4 text-muted-foreground/60" />
+                    <Input id="capacity" name="capacity" type="number" className="h-11 sm:h-10 pl-9 text-base sm:text-sm bg-muted/20 border-border/40" placeholder="500" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="established_year" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Established</Label>
+                  <Label htmlFor="established_year" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Established</Label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/60" />
-                    <Input id="established_year" name="established_year" type="number" className="pl-9 bg-muted/20 border-border/40" placeholder="1995" />
+                    <Calendar className="absolute left-3 top-3.5 sm:top-3 h-4 w-4 text-muted-foreground/60" />
+                    <Input id="established_year" name="established_year" type="number" className="h-11 sm:h-10 pl-9 text-base sm:text-sm bg-muted/20 border-border/40" placeholder="1995" />
                   </div>
                 </div>
               </div>
@@ -142,35 +142,35 @@ export function MosqueRegistrationForm() {
 
           {/* Card 2: Contact & Online Presence */}
           <Card className="border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="pb-4 bg-muted/30">
+            <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 bg-muted/30">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary shadow-inner">
                   <Globe className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Contact Details</CardTitle>
-                  <CardDescription className="text-xs">How to reach the mosque</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">Contact Details</CardTitle>
+                  <CardDescription className="text-[10px] sm:text-xs">How to reach the mosque</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
+            <CardContent className="p-4 sm:p-6 pt-4 sm:pt-6 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Phone Number</Label>
+                <Label htmlFor="phone" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Phone Number</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/60" />
-                  <Input id="phone" name="phone" type="tel" className="pl-9 bg-muted/20 border-border/40" placeholder="+1 (212) 555-0100" />
+                  <Phone className="absolute left-3 top-3.5 sm:top-3 h-4 w-4 text-muted-foreground/60" />
+                  <Input id="phone" name="phone" type="tel" className="h-11 sm:h-10 pl-9 text-base sm:text-sm bg-muted/20 border-border/40" placeholder="+1 (212) 555-0100" />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Official Email</Label>
+                <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Official Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/60" />
-                  <Input id="email" name="email" type="email" className="pl-9 bg-muted/20 border-border/40" placeholder="info@mosque.org" />
+                  <Mail className="absolute left-3 top-3.5 sm:top-3 h-4 w-4 text-muted-foreground/60" />
+                  <Input id="email" name="email" type="email" className="h-11 sm:h-10 pl-9 text-base sm:text-sm bg-muted/20 border-border/40" placeholder="info@mosque.org" />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="website" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Website (Optional)</Label>
-                <Input id="website" name="website" type="url" placeholder="https://www.mosque.org" className="bg-muted/20 border-border/40" />
+                <Label htmlFor="website" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Website (Optional)</Label>
+                <Input id="website" name="website" type="url" placeholder="https://www.mosque.org" className="h-11 sm:h-10 text-base sm:text-sm bg-muted/20 border-border/40" />
               </div>
             </CardContent>
           </Card>
@@ -178,34 +178,34 @@ export function MosqueRegistrationForm() {
 
         {/* Step 2: Location Details (Full-Width Card) */}
         <Card className="border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-          <CardHeader className="pb-4 bg-muted/30">
+          <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 bg-muted/30">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
+              <div className="p-2.5 rounded-xl bg-primary/10 text-primary shadow-inner">
                 <MapPin className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg">Location Details</CardTitle>
-                <CardDescription className="text-xs">Physical address and geography</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Location Details</CardTitle>
+                <CardDescription className="text-[10px] sm:text-xs">Physical address and geography</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid gap-6 md:grid-cols-3">
+          <CardContent className="p-4 sm:p-6 pt-4 sm:pt-6">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
               <div className="md:col-span-3 space-y-2">
-                <Label htmlFor="address" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Street Address</Label>
-                <Input id="address" name="address" placeholder="123 Peace Street" required className="bg-muted/20 border-border/40" />
+                <Label htmlFor="address" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Street Address</Label>
+                <Input id="address" name="address" placeholder="123 Peace Street" required className="h-11 sm:h-10 text-base sm:text-sm bg-muted/20 border-border/40" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="city" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">City</Label>
-                <Input id="city" name="city" placeholder="New York" required className="bg-muted/20 border-border/40" />
+                <Label htmlFor="city" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">City</Label>
+                <Input id="city" name="city" placeholder="New York" required className="h-11 sm:h-10 text-base sm:text-sm bg-muted/20 border-border/40" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="state" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">State</Label>
-                <Input id="state" name="state" placeholder="New York" required className="bg-muted/20 border-border/40" />
+                <Label htmlFor="state" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">State</Label>
+                <Input id="state" name="state" placeholder="New York" required className="h-11 sm:h-10 text-base sm:text-sm bg-muted/20 border-border/40" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="zip_code" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Zip Code</Label>
-                <Input id="zip_code" name="zip_code" placeholder="10001" required className="bg-muted/20 border-border/40" />
+                <Label htmlFor="zip_code" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Zip Code</Label>
+                <Input id="zip_code" name="zip_code" placeholder="10001" required className="h-11 sm:h-10 text-base sm:text-sm bg-muted/20 border-border/40" />
               </div>
             </div>
           </CardContent>
@@ -213,25 +213,25 @@ export function MosqueRegistrationForm() {
 
         {/* Step 3: About (Full-Width Card) */}
         <Card className="border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-          <CardHeader className="pb-4 bg-muted/30">
+          <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 bg-muted/30">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
+              <div className="p-2.5 rounded-xl bg-primary/10 text-primary shadow-inner">
                 <Info className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg">About the Mosque</CardTitle>
-                <CardDescription className="text-xs">Share your story and mission</CardDescription>
+                <CardTitle className="text-base sm:text-lg">About the Mosque</CardTitle>
+                <CardDescription className="text-[10px] sm:text-xs">Share your story and mission</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:p-6 pt-4 sm:pt-6">
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Description</Label>
+              <Label htmlFor="description" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Description</Label>
               <Textarea 
                 id="description" 
                 name="description" 
                 placeholder="Tell us about your community, history, and mission..." 
-                className="min-h-[150px] bg-muted/20 border-border/40 focus:bg-background transition-all"
+                className="min-h-[140px] sm:min-h-[150px] text-base sm:text-sm bg-muted/20 border-border/40 focus:bg-background transition-all"
               />
             </div>
           </CardContent>
@@ -239,26 +239,26 @@ export function MosqueRegistrationForm() {
 
         {/* Step 4: Facilities (Full-Width Card) */}
         <Card className="border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-          <CardHeader className="pb-4 bg-muted/30">
+          <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 bg-muted/30">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
+              <div className="p-2.5 rounded-xl bg-primary/10 text-primary shadow-inner">
                 <Check className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg">Facilities & Services</CardTitle>
-                <CardDescription className="text-xs">Select available amenities</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Facilities & Services</CardTitle>
+                <CardDescription className="text-[10px] sm:text-xs">Select available amenities</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="flex flex-wrap gap-2">
+          <CardContent className="p-4 sm:p-6 pt-4 sm:pt-6">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {COMMON_FACILITIES.map((facility) => (
                 <button
                   key={facility}
                   type="button"
                   onClick={() => toggleFacility(facility)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-xs font-medium border transition-all duration-200 flex items-center gap-2",
+                    "px-4 py-3 sm:py-2 rounded-xl text-sm sm:text-xs font-medium border transition-all duration-200 flex items-center gap-2 touch-manipulation",
                     selectedFacilities.includes(facility)
                       ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
                       : "bg-muted/50 text-muted-foreground border-border/40 hover:bg-muted hover:border-border"
@@ -276,9 +276,9 @@ export function MosqueRegistrationForm() {
         </Card>
 
         {/* Submission Section */}
-        <div className="flex flex-col items-center justify-center pt-10 pb-6 space-y-4">
-          <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10 max-w-lg text-center">
-            <p className="text-xs text-muted-foreground/80 leading-relaxed">
+        <div className="flex flex-col items-center justify-center pt-8 md:pt-10 pb-6 space-y-4 px-2">
+          <div className="p-4 sm:p-6 rounded-2xl bg-primary/5 border border-primary/10 max-w-lg text-center backdrop-blur-sm">
+            <p className="text-[10px] sm:text-xs text-muted-foreground/80 leading-relaxed font-medium">
               By submitting this registration, you confirm that you have the authority to represent 
               this mosque and that all information provided is accurate and truthful.
             </p>
@@ -286,7 +286,7 @@ export function MosqueRegistrationForm() {
           <Button 
             type="submit" 
             size="lg" 
-            className="min-w-[280px] h-14 text-lg font-bold rounded-2xl shadow-lg hover:shadow-primary/20 transition-all border-b-4 border-primary-foreground/20 active:border-b-0 active:translate-y-1" 
+            className="w-full sm:min-w-[280px] h-14 text-lg font-bold rounded-2xl shadow-xl hover:shadow-primary/20 transition-all border-b-4 border-primary-foreground/20 active:border-b-0 active:translate-y-1" 
             disabled={loading}
           >
             {loading ? (
@@ -298,7 +298,7 @@ export function MosqueRegistrationForm() {
               "Submit Registration"
             )}
           </Button>
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-[0.2em]">
+          <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em] opacity-60">
             Secure Verification Process
           </p>
         </div>

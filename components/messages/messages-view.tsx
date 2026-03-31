@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -446,11 +447,11 @@ export function MessagesView() {
   }
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden rounded-xl border bg-background/50 backdrop-blur-sm">
+    <div className="flex flex-1 h-[calc(100vh-64px)] w-full overflow-hidden bg-background">
       {/* Conversations List */}
       <div className={cn(
-        "w-full border-r border-border/50 md:w-80 flex flex-col bg-muted/5",
-        selectedConversation && "hidden md:flex"
+        "w-full border-r border-border/40 md:w-80 lg:w-96 flex flex-col bg-muted/5 transition-all duration-300",
+        selectedConversation ? "hidden md:flex" : "flex"
       )}>
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold">Messages</h2>
@@ -656,43 +657,46 @@ export function MessagesView() {
 
       {/* Chat Area */}
       <div className={cn(
-        "flex flex-1 flex-col",
+        "flex flex-1 flex-col transition-all duration-300 bg-background",
         !selectedConversation && "hidden md:flex"
       )}>
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="flex items-center gap-3 border-b p-4">
+            <div className="flex items-center gap-3 border-b p-3 sm:p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm sticky top-0 z-10 font-bold">
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="md:hidden h-10 w-10 rounded-xl active:bg-primary/10 active:text-primary transition-all"
                 onClick={() => setSelectedConversation(null)}
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-6 w-6" />
               </Button>
-              <Avatar>
-                <AvatarImage src={getConversationAvatar(selectedConversation) || ""} />
-                <AvatarFallback>
-                  {selectedConversation.type === "direct" ? (
-                    <User className="h-4 w-4" />
-                  ) : (
-                    <Users className="h-4 w-4" />
-                  )}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl shadow-md border-2 border-primary/10">
+                  <AvatarImage src={getConversationAvatar(selectedConversation) || ""} />
+                  <AvatarFallback className="rounded-xl bg-primary/5 text-primary">
+                    {selectedConversation.type === "direct" ? (
+                      <User className="h-5 w-5" />
+                    ) : (
+                      <Users className="h-5 w-5" />
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-background shadow-sm" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="font-medium truncate underline-offset-4 decoration-primary/30 group-hover:underline">
+                  <p className="font-bold text-sm sm:text-base truncate tracking-tight">
                     {getConversationName(selectedConversation)}
                   </p>
                   {isBroadcast && (
-                    <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20 px-1.5 py-0">
+                    <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20 px-1.5 py-0 rounded-lg">
                       Broadcast
                     </Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-[10px] sm:text-xs text-muted-foreground/80 font-medium truncate uppercase tracking-widest">
                   {selectedConversation.type === "direct"
                     ? "Direct Message"
                     : `${selectedConversation.participants.length} Active Participants`}
@@ -700,16 +704,16 @@ export function MessagesView() {
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" disabled={isDeleting}>
+                  <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 hover:bg-muted/80 transition-all">
                     <MoreVertical className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="rounded-2xl border-border/60 shadow-2xl p-1.5">
                   <DropdownMenuItem 
                     onClick={handleDeleteConversation}
-                    className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                    className="text-destructive focus:text-destructive focus:bg-destructive/10 rounded-xl py-2.5 font-bold"
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <Trash2 className="mr-3 h-4 w-4" />
                     Delete Conversation
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -717,29 +721,29 @@ export function MessagesView() {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
+            <ScrollArea className="flex-1 px-4 py-6 md:px-6">
               {loadingMessages ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <div className="flex justify-center py-12">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary opacity-20" />
                 </div>
               ) : messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center h-full">
-                  <div className="relative mb-8">
-                    <div className="absolute inset-0 bg-primary/10 blur-3xl animate-pulse rounded-full" />
-                    <div className="relative bg-muted/30 backdrop-blur-sm border border-border p-8 rounded-full">
-                      <Send className="h-10 w-10 text-primary opacity-40 -rotate-12" />
+                <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-6">
+                  <div className="relative mb-10 group">
+                    <div className="absolute inset-0 bg-primary/20 blur-3xl animate-pulse rounded-full group-hover:bg-primary/40 transition-all duration-1000" />
+                    <div className="relative bg-background border border-border/60 shadow-inner p-10 rounded-full group-hover:scale-110 transition-transform duration-500">
+                      <Send className="h-12 w-12 text-primary opacity-60 -rotate-12 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-3 italic tracking-tight">Salam!</h3>
-                  <p className="text-muted-foreground text-sm max-w-[240px] leading-relaxed">
+                  <h3 className="text-3xl font-black text-foreground mb-4 italic tracking-tighter">Salam!</h3>
+                  <p className="text-muted-foreground text-sm max-w-[280px] leading-relaxed font-medium">
                     Break the ice! Start the conversation by sending a warm greeting below.
                   </p>
-                  <div className="mt-8 flex gap-2">
+                  <div className="mt-10 flex flex-wrap justify-center gap-3">
                     {["Assalamu Alaikum", "Ramadan Mubarak", "Salam Brother!"].map((pill) => (
                       <button 
                         key={pill} 
                         onClick={() => setNewMessage(pill)}
-                        className="text-[10px] bg-primary/5 hover:bg-primary/10 text-primary border border-primary/20 rounded-full px-3 py-1 transition-all"
+                        className="text-[11px] bg-primary/5 hover:bg-primary/10 text-primary border border-primary/20 rounded-2xl px-5 py-2.5 transition-all font-bold tracking-tight shadow-sm active:scale-95"
                       >
                         {pill}
                       </button>
@@ -747,7 +751,7 @@ export function MessagesView() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-6 pb-4">
                   {messages.map((msg, index) => {
                     const isOwn = msg.sender_id === user?.id;
                     const isSystem = msg.message_type === "system";
@@ -760,17 +764,17 @@ export function MessagesView() {
 
                     if (isSystem) {
                       return (
-                        <div key={msg.id} className="flex flex-col items-center gap-4 my-2">
+                        <div key={msg.id} className="flex flex-col items-center gap-4 my-6">
                           {showDateHeader && (
-                            <div className="flex items-center gap-2 w-full">
-                              <div className="h-[1px] flex-1 bg-border/50" />
-                              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                            <div className="flex items-center gap-3 w-full mb-2">
+                              <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-border/40" />
+                              <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">
                                 {isToday(messageDate) ? "Today" : isYesterday(messageDate) ? "Yesterday" : format(messageDate, "MMMM d, yyyy")}
                               </span>
-                              <div className="h-[1px] flex-1 bg-border/50" />
+                              <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-border/40" />
                             </div>
                           )}
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest bg-muted/50 rounded-full px-4 py-1 border border-border/50">
+                          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest bg-muted/30 rounded-2xl px-6 py-2 border border-border/40 shadow-sm">
                             {msg.content}
                           </span>
                         </div>
@@ -778,95 +782,101 @@ export function MessagesView() {
                     }
 
                     return (
-                      <div key={msg.id} className="flex flex-col gap-1">
+                      <div key={msg.id} className="flex flex-col gap-1.5 group select-none">
                         {showDateHeader && (
-                          <div className="flex items-center gap-2 w-full my-4">
-                            <div className="h-[1px] flex-1 bg-border/50" />
-                            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                          <div className="flex items-center gap-3 w-full my-6">
+                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-border/40" />
+                            <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">
                                 {isToday(messageDate) ? "Today" : isYesterday(messageDate) ? "Yesterday" : format(messageDate, "MMMM d, yyyy")}
                             </span>
-                            <div className="h-[1px] flex-1 bg-border/50" />
+                            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-border/40" />
                           </div>
                         )}
                         <div
-                          className={cn("flex gap-3", isOwn && "flex-row-reverse")}
+                          className={cn("flex gap-3 px-1", isOwn && "flex-row-reverse")}
                         >
                           {showAvatar ? (
-                            <Avatar className={cn("h-8 w-8 ring-offset-2 ring-transparent transition-all", !isOwn && "hover:ring-primary/20 hover:scale-105")}>
-                              <AvatarImage src={msg.sender?.avatar_url || ""} />
-                              <AvatarFallback className="bg-primary/5 text-primary-foreground text-[10px]">
-                                {msg.sender?.full_name?.charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
+                            <div className="flex flex-col flex-shrink-0">
+                              <Avatar className={cn("h-8 w-8 sm:h-9 sm:w-9 rounded-xl shadow-sm ring-offset-2 ring-transparent transition-all", !isOwn && "hover:ring-primary/20 hover:scale-105")}>
+                                <AvatarImage src={msg.sender?.avatar_url || ""} />
+                                <AvatarFallback className="rounded-xl bg-primary/5 text-primary text-[10px] font-bold">
+                                  {msg.sender?.full_name?.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
                           ) : (
-                            <div className="w-8" />
+                            <div className="w-8 sm:w-9" />
                           )}
-                          <div className={cn("max-w-[70%] group", isOwn && "items-end")}>
+                          <div className={cn("max-w-[85%] sm:max-w-[75%] flex flex-col", isOwn && "items-end")}>
                             {showAvatar && !isOwn && (
-                              <p className="mb-0.5 ml-1 text-[10px] font-medium text-muted-foreground">{msg.sender?.full_name}</p>
+                              <p className="mb-1 ml-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{msg.sender?.full_name}</p>
                             )}
                             <div
                               className={cn(
-                                "relative rounded-2xl p-3 shadow-sm transition-all hover:shadow-md",
+                                "relative px-4 py-3 shadow-sm transition-all hover:shadow-md",
                                 isOwn 
-                                  ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-tr-none" 
-                                  : "bg-muted/80 backdrop-blur-sm border border-border/50 rounded-tl-none hover:bg-muted"
+                                  ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-2xl rounded-tr-none shadow-primary/10" 
+                                  : "bg-background border border-border/60 rounded-2xl rounded-tl-none hover:bg-muted/10"
                               )}
                             >
                               {msg.image_url && (
-                                <div className="mb-2 overflow-hidden rounded-xl border border-white/10 ring-1 ring-black/5">
+                                <div className="mb-2 -mx-1 overflow-hidden rounded-xl border border-white/10 ring-1 ring-black/5 shadow-inner">
                                   <Image
                                     src={msg.image_url}
                                     alt="Message image"
-                                    width={250}
-                                    height={250}
-                                    className="object-cover hover:scale-105 transition-transform duration-500"
+                                    width={300}
+                                    height={300}
+                                    className="object-cover hover:scale-105 transition-transform duration-700"
                                   />
                                 </div>
                               )}
-                              {msg.content && <p className="text-sm leading-relaxed">{msg.content}</p>}
+                              {msg.content && <p className="text-[15px] sm:text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>}
+                              
+                              <p className={cn(
+                                "mt-1.5 text-[9px] font-bold tracking-tight opacity-50",
+                                isOwn ? "text-primary-foreground/80" : "text-muted-foreground"
+                              )}>
+                                {format(new Date(msg.created_at), "h:mm a")}
+                                {isOwn && (
+                                  <CheckCheck className={cn("ml-1.5 inline h-3 w-3", index === messages.length - 1 ? "opacity-100" : "opacity-40")} />
+                                )}
+                              </p>
                             </div>
-                            <p className={cn("mt-1.5 px-1 text-[9px] font-medium text-muted-foreground/60 transition-opacity opacity-0 group-hover:opacity-100", isOwn && "text-right")}>
-                              {format(new Date(msg.created_at), "h:mm a")}
-                              {isOwn && (
-                                <CheckCheck className={cn("ml-1.5 inline h-3 w-3", index === messages.length - 1 ? "text-primary" : "text-muted-foreground/40")} />
-                              )}
-                            </p>
                           </div>
                         </div>
                       </div>
                     );
                   })}
-                  <div ref={messagesEndRef} />
+                  <div ref={messagesEndRef} className="h-2" />
                 </div>
               )}
             </ScrollArea>
 
             {/* Message Input */}
-            <div className="border-t p-4 bg-muted/10 backdrop-blur-sm">
+            <div className="border-t p-3 sm:p-4 bg-background/95 backdrop-blur shadow-2xl sticky bottom-0 z-20">
               {imagePreview && (
-                <div className="relative mb-3 inline-block group">
-                  <div className="overflow-hidden rounded-xl border border-border shadow-lg">
+                <div className="relative mb-4 inline-block group">
+                  <div className="overflow-hidden rounded-2xl border-2 border-primary/20 shadow-2xl">
                     <Image
                       src={imagePreview}
                       alt="Preview"
-                      width={100}
-                      height={100}
+                      width={120}
+                      height={120}
                       className="object-cover"
                     />
                   </div>
                   <Button
                     size="icon"
                     variant="destructive"
-                    className="absolute -right-2 -top-2 h-6 w-6 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute -right-3 -top-3 h-7 w-7 rounded-full shadow-lg transition-transform hover:scale-110"
                     onClick={clearImage}
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
               )}
               {canSendMessage ? (
-                <div className="flex gap-2 items-center bg-card p-1.5 rounded-2xl border shadow-sm ring-offset-background focus-within:ring-2 ring-primary/20 ring-offset-2 transition-all">
+                <div className="flex gap-2 items-end bg-muted/40 p-2 rounded-[24px] border border-border/40 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-300">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -877,17 +887,19 @@ export function MessagesView() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-xl hover:bg-primary/5 hover:text-primary transition-colors h-10 w-10 shrink-0"
+                    className="rounded-2xl hover:bg-primary/10 hover:text-primary transition-all h-11 w-11 shrink-0 active:scale-90"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <ImagePlus className="h-5 w-5" />
                   </Button>
-                  <Input
+                  <Textarea
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                      setNewMessage(e.target.value);
+                    }}
                     placeholder="Write your message..."
-                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-10 text-sm"
-                    onKeyDown={(e) => {
+                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-2 min-h-[44px] max-h-[120px] py-3 text-[16px] sm:text-sm leading-relaxed resize-none scrollbar-hide flex-1"
+                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         handleSendMessage();
@@ -897,17 +909,21 @@ export function MessagesView() {
                   <Button 
                     onClick={handleSendMessage} 
                     disabled={sending || (!newMessage.trim() && !selectedImage)}
-                    className="rounded-xl h-10 px-4 shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0"
+                    className="rounded-2xl h-11 w-11 p-0 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-90 shrink-0 bg-primary text-primary-foreground"
                   >
-                    {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                   </Button>
                 </div>
               ) : (
-                <div className="bg-muted/50 rounded-2xl border border-dashed border-border/50 p-4 text-center">
-                  <Megaphone className="h-5 w-5 text-muted-foreground/30 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Only admins can post in this broadcast channel</p>
+                <div className="bg-amber-500/5 rounded-2xl border-2 border-dashed border-amber-500/20 p-5 text-center shadow-inner">
+                  <Megaphone className="h-6 w-6 text-amber-500 opacity-40 mx-auto mb-2" />
+                  <p className="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em] leading-relaxed">
+                    Broadcast Mode Only<br/>
+                    <span className="opacity-60 lowercase font-medium tracking-normal text-xs">Only authorized imams & admins can send messages here</span>
+                  </p>
                 </div>
               )}
+              <div className="h-safe-bottom" /> {/* Margin for mobile home indicator */}
             </div>
           </>
         ) : (

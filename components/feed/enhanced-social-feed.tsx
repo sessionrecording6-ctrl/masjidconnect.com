@@ -334,39 +334,39 @@ function PostCard({
   const role = post.profiles?.role?.toLowerCase()
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-3">
+    <Card className="overflow-hidden border-border/40 shadow-sm hover:shadow-md transition-all duration-300 rounded-[1.5rem] bg-card/60 backdrop-blur-sm group/card">
+      <CardHeader className="pb-3 px-5 pt-5">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Link href={`/profile/${post.author_id}`} className="hover:opacity-80 transition-opacity">
-              <Avatar className="h-11 w-11">
-                <AvatarImage src={post.profiles?.avatar_url} alt={post.profiles?.full_name} />
-                <AvatarFallback className="bg-primary/10 text-primary">
-                  {post.profiles?.full_name?.[0] || 'U'}
-                </AvatarFallback>
-              </Avatar>
+            <Link href={`/profile/${post.author_id}`} className="hover:scale-105 transition-transform duration-300">
+              <div className="relative">
+                <Avatar className="h-12 w-12 border-2 border-background shadow-sm">
+                  <AvatarImage src={post.profiles?.avatar_url} alt={post.profiles?.full_name} className="object-cover" />
+                  <AvatarFallback className="bg-primary/5 text-primary font-black">
+                    {post.profiles?.full_name?.[0] || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background shadow-sm" />
+              </div>
             </Link>
             <div>
-              <div className="flex items-center gap-2">
-                <Link href={`/profile/${post.author_id}`} className="font-semibold text-sm hover:underline">
+              <div className="flex items-center gap-1.5">
+                <Link href={`/profile/${post.author_id}`} className="font-bold text-[15px] hover:text-primary transition-colors tracking-tight leading-tight">
                   {post.profiles?.full_name || 'Anonymous'}
                 </Link>
                 {post.profiles?.is_verified && (
-                  <CheckCircle className="h-4 w-4 text-primary fill-primary/20" />
-                )}
-                {role && role !== 'member' && role !== 'user' && (
-                  <Badge variant="secondary" className="text-xs gap-1 capitalize">
-                    {getRoleIcon(role)}
-                    {role}
-                  </Badge>
+                  <CheckCircle className="h-3.5 w-3.5 text-primary fill-primary/10 shadow-sm" />
                 )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">
                 <span>{post.created_at && formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
-                {post.category && post.category !== 'general' && (
+                {role && role !== 'member' && role !== 'user' && (
                   <>
-                    <span>·</span>
-                    <span className="capitalize">{post.category}</span>
+                    <span className="opacity-40">·</span>
+                    <Badge variant="secondary" className="h-4 px-1.5 text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary/80 border-transparent rounded-[4px] gap-1">
+                      {getRoleIcon(role)}
+                      {role}
+                    </Badge>
                   </>
                 )}
               </div>
@@ -375,28 +375,28 @@ function PostCard({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted/50 active:scale-90 transition-all">
+                <MoreHorizontal className="h-5 w-5 text-muted-foreground/60" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleBookmark}>
-                <Bookmark className={cn("h-4 w-4 mr-2", isBookmarked && "fill-current")} />
-                {isBookmarked ? 'Remove from saved' : 'Save post'}
+            <DropdownMenuContent align="end" className="w-56 rounded-2xl border-border/40 shadow-2xl p-1.5 backdrop-blur-md">
+              <DropdownMenuItem onClick={handleBookmark} className="rounded-xl h-11 px-3 font-bold text-sm gap-3">
+                <Bookmark className={cn("h-4 w-4", localBookmarked && "fill-current text-primary")} />
+                {localBookmarked ? 'Remove from saved' : 'Save post'}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleShare}>
-                <Share2 className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={handleShare} className="rounded-xl h-11 px-3 font-bold text-sm gap-3">
+                <Share2 className="h-4 w-4" />
                 Copy link
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(`/messages?userId=${post.author_id}`)}>
-                <MessageSquare className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={() => router.push(`/messages?userId=${post.author_id}`)} className="rounded-xl h-11 px-3 font-bold text-sm gap-3">
+                <MessageSquare className="h-4 w-4" />
                 Message {post.profiles?.full_name?.split(' ')[0] || 'User'}
               </DropdownMenuItem>
               {isOwner && (
                 <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleDeletePost} className="text-destructive">
-                    <Trash2 className="h-4 w-4 mr-2" />
+                  <DropdownMenuSeparator className="bg-border/40 my-1" />
+                  <DropdownMenuItem onClick={handleDeletePost} className="rounded-xl h-11 px-3 font-bold text-sm gap-3 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive">
+                    <Trash2 className="h-4 w-4" />
                     Delete post
                   </DropdownMenuItem>
                 </>
@@ -406,115 +406,126 @@ function PostCard({
         </div>
       </CardHeader>
 
-      <CardContent className="pb-3 text-sm">
+      <CardContent className="pb-4 px-5">
         {post.post_type && post.post_type !== 'text' && post.post_type !== 'image' && (
-          <div className="mb-3">
-            <Badge variant="outline" className="gap-1.5 capitalize">
+          <div className="mb-4">
+            <Badge variant="outline" className="gap-2 h-7 px-3 text-[10px] font-black uppercase tracking-widest border-primary/20 bg-primary/5 text-primary rounded-lg">
               {getPostTypeIcon(post.post_type)}
               {post.post_type.replace('-', ' ')}
             </Badge>
           </div>
         )}
 
-        <p className="whitespace-pre-wrap leading-relaxed">{post.content}</p>
+        <p className="whitespace-pre-wrap leading-relaxed text-sm sm:text-[15px] font-medium text-foreground/90 tracking-tight">{post.content}</p>
 
         {post.metadata && post.metadata.eventDetails && (
-          <div className="mt-3 rounded-lg border bg-muted/50 p-3">
-            <h4 className="font-semibold text-sm">{post.metadata.eventDetails.title}</h4>
-            <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
+          <div className="mt-4 rounded-2xl border border-border/40 bg-muted/20 p-4 shadow-inner">
+            <h4 className="font-bold text-[15px] tracking-tight">{post.metadata.eventDetails.title}</h4>
+            <div className="mt-3 flex flex-col gap-2.5">
+              <div className="flex items-center gap-2.5 text-xs font-bold text-muted-foreground/80">
+                <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                  <Calendar className="h-3.5 w-3.5" />
+                </div>
                 {new Date(post.metadata.eventDetails.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
-              </span>
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+              </div>
+              <div className="flex items-center gap-2.5 text-xs font-bold text-muted-foreground/80">
+                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
+                  <MapPin className="h-3.5 w-3.5" />
+                </div>
                 {post.metadata.eventDetails.location}
-              </span>
+              </div>
             </div>
+            <Button className="w-full mt-4 rounded-xl font-bold h-9 shadow-lg shadow-primary/10 active:scale-95 transition-all text-xs">View Event Details</Button>
           </div>
         )}
 
         {post.metadata && post.metadata.quoteSource && (
-          <p className="mt-2 text-xs text-muted-foreground italic">
-            — {post.metadata.quoteSource}
-          </p>
+          <div className="mt-4 border-l-4 border-primary/20 pl-4 py-2 bg-primary/5 rounded-r-xl">
+            <Quote className="h-6 w-6 text-primary/10 mb-1" />
+            <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">
+              — {post.metadata.quoteSource}
+            </p>
+          </div>
         )}
 
         {post.image_url && (
-          <div className="mt-3 rounded-lg overflow-hidden relative w-full aspect-video">
+          <div className="mt-4 rounded-2xl overflow-hidden relative w-full aspect-[4/3] sm:aspect-video shadow-lg border border-border/20 group/img">
             <Image 
               src={post.image_url} 
               alt="Post attachment" 
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-1000 group-hover/img:scale-105"
             />
           </div>
         )}
       </CardContent>
 
-      <CardFooter className="flex flex-col pt-0 pb-3">
+      <CardFooter className="flex flex-col pt-0 pb-5 px-5">
         {/* Stats */}
-        <div className="flex items-center justify-between w-full py-2 border-y border-border/50 text-xs text-muted-foreground mb-2">
-          <span>{localLikesCount || 0} likes</span>
-          <span>{post.comments_count || 0} comments</span>
+        <div className="flex items-center justify-between w-full py-3 border-y border-border/30 text-[11px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">
+          <div className="flex items-center gap-4">
+             <span className="hover:text-primary transition-colors cursor-pointer">{localLikesCount || 0} Likes</span>
+             <span className="hover:text-primary transition-colors cursor-pointer">{post.comments_count || 0} Comments</span>
+          </div>
+          <span className="hover:text-primary transition-colors cursor-pointer">{post.shares_count || 0} Shares</span>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between w-full h-9">
+        <div className="flex items-center justify-between w-full gap-1">
           <Button 
             variant="ghost" 
             size="sm" 
-            className={cn("gap-2 h-full flex-1", localLiked && "text-rose-500")}
+            className={cn("gap-2 h-11 flex-1 rounded-xl font-bold text-xs active:scale-90 transition-all", localLiked ? "text-rose-500 bg-rose-500/5 hover:bg-rose-500/10" : "text-muted-foreground/80 hover:bg-muted/50")}
             onClick={handleLike}
           >
-            <Heart className={cn("h-4 w-4", localLiked && "fill-current")} />
-            Like
+            <Heart className={cn("h-4 w-4 transition-transform duration-300", localLiked && "fill-current scale-110")} />
+            <span className="hidden sm:inline">Like</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="gap-2 h-full flex-1"
+            className={cn("gap-2 h-11 flex-1 rounded-xl font-bold text-xs text-muted-foreground/80 hover:bg-muted/50 active:scale-90 transition-all", showComments && "text-primary bg-primary/5")}
             onClick={toggleComments}
           >
-            <MessageCircle className="h-4 w-4" />
-            Comment
+            <MessageCircle className={cn("h-4 w-4", showComments && "fill-current")} />
+            <span className="hidden sm:inline">Comment</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="gap-2 h-full flex-1"
+            className="gap-2 h-11 flex-1 rounded-xl font-bold text-xs text-muted-foreground/80 hover:bg-muted/50 active:scale-90 transition-all"
             onClick={handleShare}
           >
             <Share2 className="h-4 w-4" />
-            Share
+            <span className="hidden sm:inline">Share</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
-            className={cn("gap-2 h-full flex-1", localBookmarked && "text-primary")}
+            className={cn("gap-2 h-11 flex-1 rounded-xl font-bold text-xs active:scale-90 transition-all", localBookmarked ? "text-amber-500 bg-amber-500/5 hover:bg-amber-500/10" : "text-muted-foreground/80 hover:bg-muted/50")}
             onClick={handleBookmark}
           >
-            <Bookmark className={cn("h-4 w-4", localBookmarked && "fill-current")} />
-            Save
+            <Bookmark className={cn("h-4 w-4 transition-transform duration-300", localBookmarked && "fill-current scale-110")} />
+            <span className="hidden sm:inline">Save</span>
           </Button>
         </div>
 
         {/* Comments Section */}
         {showComments && (
-          <div className="w-full mt-3 pt-3 border-t border-border/50 space-y-3">
+          <div className="w-full mt-4 pt-4 border-t border-border/30 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
             {/* Add Comment */}
             {user && (
-              <div className="flex gap-2 items-start">
-                <Avatar className="h-8 w-8 shrink-0">
+              <div className="flex gap-3 items-start">
+                <Avatar className="h-9 w-9 shrink-0 border border-background shadow-sm">
                   <AvatarImage src={user.user_metadata?.avatar_url || ""} />
-                  <AvatarFallback>{user.email?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
+                  <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">{user.email?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 flex gap-2">
                   <Textarea
                     placeholder="Write a comment..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    className="min-h-[40px] h-[40px] py-2 resize-none text-sm"
+                    className="min-h-[44px] h-[44px] py-3 px-4 resize-none text-sm rounded-xl border-border/60 bg-muted/30 focus-visible:ring-primary/20 transition-all"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -524,10 +535,11 @@ function PostCard({
                   />
                   <Button
                     size="icon"
+                    className="h-11 w-11 rounded-xl shrink-0 shadow-lg shadow-primary/10 active:scale-90 transition-all"
                     onClick={handleAddComment}
                     disabled={!newComment.trim() || addingComment}
                   >
-                    {addingComment ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    {addingComment ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5 translate-x-0.5 -translate-y-0.5" />}
                   </Button>
                 </div>
               </div>
@@ -535,35 +547,44 @@ function PostCard({
 
             {/* Comments List */}
             {loadingComments ? (
-              <div className="flex justify-center py-4 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>
+              <div className="flex justify-center py-6 text-muted-foreground/40"><Loader2 className="h-6 w-6 animate-spin" /></div>
             ) : comments.length > 0 ? (
-              <div className="space-y-3 mt-4">
+              <div className="space-y-4 pt-2">
                 {comments.map((comment) => (
-                  <div key={comment.id} className="flex gap-3">
-                    <Link href={`/profile/${comment.author_id}`}>
-                      <Avatar className="h-8 w-8 hover:opacity-80 transition-opacity">
-                        <AvatarImage src={comment.profiles?.avatar_url || ""} />
-                        <AvatarFallback>
+                  <div key={comment.id} className="flex gap-3 group/comment">
+                    <Link href={`/profile/${comment.author_id}`} className="shrink-0">
+                      <Avatar className="h-9 w-9 border border-background shadow-sm hover:scale-105 transition-transform">
+                        <AvatarImage src={comment.profiles?.avatar_url || ""} className="object-cover" />
+                        <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                           {comment.profiles?.full_name?.charAt(0) || "U"}
                         </AvatarFallback>
                       </Avatar>
                     </Link>
-                    <div className="flex-1 bg-muted/50 rounded-lg p-3">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <Link href={`/profile/${comment.author_id}`} className="font-semibold text-xs hover:underline">
-                          {comment.profiles?.full_name || "Anonymous"}
-                        </Link>
-                        <span className="text-[10px] text-muted-foreground">
-                          {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                        </span>
-                      </div>
-                      <p className="text-sm">{comment.content}</p>
+                    <div className="flex-1">
+                       <div className="bg-muted/40 rounded-[1.25rem] px-4 py-3 border border-border/20 transition-colors hover:border-border/40">
+                         <div className="flex items-center justify-between gap-2 mb-1">
+                           <Link href={`/profile/${comment.author_id}`} className="font-bold text-[13px] hover:text-primary transition-colors tracking-tight">
+                             {comment.profiles?.full_name || "Anonymous"}
+                           </Link>
+                           <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">
+                             {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                           </span>
+                         </div>
+                         <p className="text-sm font-medium text-foreground/80 tracking-tight leading-relaxed">{comment.content}</p>
+                       </div>
+                       <div className="flex items-center gap-4 mt-2 ml-2">
+                          <button className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors">Like</button>
+                          <button className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors">Reply</button>
+                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-center text-xs text-muted-foreground py-2">No comments yet. Be the first!</p>
+              <div className="text-center py-8">
+                 <MessageCircle className="h-10 w-10 text-muted-foreground/10 mx-auto mb-2" />
+                 <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Be the first to share a thought</p>
+              </div>
             )}
           </div>
         )}
@@ -819,57 +840,68 @@ export function EnhancedSocialFeed() {
       <main className="lg:col-span-6 space-y-6">
         
         {/* Create Post Card */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={profile?.avatar_url || ""} />
-                <AvatarFallback className="bg-primary/10 text-primary">
-                  {profile?.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
-                </AvatarFallback>
-              </Avatar>
+        <Card className="border-border/40 shadow-sm hover:shadow-md transition-all duration-300 rounded-[1.5rem] bg-card/60 backdrop-blur-sm overflow-hidden group/create">
+          <CardContent className="p-5">
+            <div className="flex items-start gap-4">
+              <div className="relative">
+                <Avatar className="h-11 w-11 border-2 border-background shadow-sm">
+                  <AvatarImage src={profile?.avatar_url || ""} />
+                  <AvatarFallback className="bg-primary/5 text-primary font-bold">
+                    {profile?.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background shadow-sm" />
+              </div>
               <div className="flex-1">
                 <button
                   onClick={() => setIsCreateDialogOpen(true)}
-                  className="w-full rounded-full border border-input bg-muted/50 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted transition-colors"
+                  className="w-full rounded-2xl border border-border/40 bg-muted/30 px-5 py-3 text-left text-[15px] font-medium text-muted-foreground/60 hover:bg-muted/50 transition-all duration-300 shadow-inner group-hover/create:border-primary/20"
                 >
                   {"What's on your mind? Share with the community..."}
                 </button>
-                <div className="mt-3 flex items-center gap-2 flex-wrap">
+                <div className="mt-4 flex items-center gap-2 flex-wrap sm:gap-4">
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="gap-2 text-muted-foreground"
+                    className="gap-2 text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 hover:bg-primary/5 hover:text-primary rounded-xl px-3 h-9 transition-all active:scale-95"
                     onClick={() => { setNewPostType('image'); setIsCreateDialogOpen(true) }}
                   >
-                    <ImagePlus className="h-4 w-4 text-primary" />
+                    <div className="p-1.5 rounded-lg bg-primary/5">
+                      <ImagePlus className="h-3.5 w-3.5 text-primary" />
+                    </div>
                     Photo
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="gap-2 text-muted-foreground"
+                    className="gap-2 text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 hover:bg-amber-500/5 hover:text-amber-600 rounded-xl px-3 h-9 transition-all active:scale-95"
                     onClick={() => { setNewPostType('event'); setIsCreateDialogOpen(true) }}
                   >
-                    <Calendar className="h-4 w-4 text-amber-500" />
+                    <div className="p-1.5 rounded-lg bg-amber-500/5">
+                      <Calendar className="h-3.5 w-3.5 text-amber-500" />
+                    </div>
                     Event
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="gap-2 text-muted-foreground"
+                    className="gap-2 text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 hover:bg-rose-500/5 hover:text-rose-600 rounded-xl px-3 h-9 transition-all active:scale-95"
                     onClick={() => { setNewPostType('prayer-request'); setIsCreateDialogOpen(true) }}
                   >
-                    <HandHeart className="h-4 w-4 text-rose-500" />
-                    Dua Request
+                    <div className="p-1.5 rounded-lg bg-rose-500/5">
+                      <HandHeart className="h-3.5 w-3.5 text-rose-500" />
+                    </div>
+                    Dua
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="gap-2 text-muted-foreground hidden sm:inline-flex"
+                    className="gap-2 text-[11px] font-black uppercase tracking-widest text-muted-foreground/80 hover:bg-teal-500/5 hover:text-teal-600 rounded-xl px-3 h-9 transition-all active:scale-95 hidden sm:inline-flex"
                     onClick={() => { setNewPostType('quote'); setIsCreateDialogOpen(true) }}
                   >
-                    <Quote className="h-4 w-4 text-teal-500" />
+                    <div className="p-1.5 rounded-lg bg-teal-500/5">
+                      <Quote className="h-3.5 w-3.5 text-teal-500" />
+                    </div>
                     Quote
                   </Button>
                 </div>
@@ -879,28 +911,48 @@ export function EnhancedSocialFeed() {
         </Card>
 
         {/* Filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar px-1">
           <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full">
-            <TabsList className="w-full justify-start h-10 bg-transparent p-0">
+            <TabsList className="w-full justify-start h-12 bg-transparent p-0 gap-3">
               <TabsTrigger 
                 value="all" 
-                className={cn("rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground")}
-              >All</TabsTrigger>
+                className={cn(
+                  "rounded-2xl px-6 h-10 font-black text-[11px] uppercase tracking-widest transition-all",
+                  "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20",
+                  "bg-card/40 border border-border/40 text-muted-foreground/60 hover:bg-muted/50"
+                )}
+              >All Feed</TabsTrigger>
               <TabsTrigger 
                 value="islamic" 
-                className={cn("rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground")}
+                className={cn(
+                  "rounded-2xl px-6 h-10 font-black text-[11px] uppercase tracking-widest transition-all",
+                  "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20",
+                  "bg-card/40 border border-border/40 text-muted-foreground/60 hover:bg-muted/50"
+                )}
               >Islamic</TabsTrigger>
               <TabsTrigger 
                 value="community" 
-                className={cn("rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground")}
+                className={cn(
+                  "rounded-2xl px-6 h-10 font-black text-[11px] uppercase tracking-widest transition-all",
+                  "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20",
+                  "bg-card/40 border border-border/40 text-muted-foreground/60 hover:bg-muted/50"
+                )}
               >Community</TabsTrigger>
               <TabsTrigger 
                 value="event" 
-                className={cn("rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground")}
+                className={cn(
+                  "rounded-2xl px-6 h-10 font-black text-[11px] uppercase tracking-widest transition-all",
+                  "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20",
+                  "bg-card/40 border border-border/40 text-muted-foreground/60 hover:bg-muted/50"
+                )}
               >Events</TabsTrigger>
               <TabsTrigger 
                 value="saved" 
-                className={cn("rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5")}
+                className={cn(
+                  "rounded-2xl px-6 h-10 font-black text-[11px] uppercase tracking-widest transition-all gap-2",
+                  "data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/20",
+                  "bg-card/40 border border-border/40 text-muted-foreground/60 hover:bg-muted/50"
+                )}
               >
                 <Bookmark className="h-3.5 w-3.5" /> Saved
               </TabsTrigger>
