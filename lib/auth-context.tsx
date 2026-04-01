@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { User, Session } from "@supabase/supabase-js";
+import type { User, Session, SupabaseClient } from "@supabase/supabase-js";
 
 export type UserRole = "admin" | "shura" | "imam" | "member";
 
@@ -43,10 +43,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [supabaseError, setSupabaseError] = useState<string | null>(null);
 
-  const supabase = createClient();
+  const supabase = useMemo<SupabaseClient | null>(() => {
+    try {
+      return createClient();
+    } catch (error) {
+      setSupabaseError(error instanceof Error ? error.message : "Failed to initialize Supabase");
+      setLoading(false);
+      return null;
+    }
+  }, []);
 
   const fetchProfile = useCallback(async (userId: string) => {
+    if (!supabase) return null;
+    
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
@@ -88,6 +99,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize auth and listen for changes
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     const initAuth = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -131,7 +147,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase, fetchProfile]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     setUser(null);
     setSession(null);
     setProfile(null);
@@ -155,6 +173,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isMember: profile?.role === "member",
     hasRole,
   };
+
+  // Show error if Supabase failed to initialize
+  if (supabaseError) {
+    return (
+      <AuthContext.Provider value={value}>
+        <div className="flex min-h-screen items-center justify-center p-4">
+          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center max-w-md">
+            <h2 className="text-lg font-semibold text-destructive mb-2">Configuration Error</h2>
+            <p className="text-sm text-muted-foreground">{supabaseError}</p>
+          </div>
+        </div>
+      </AuthContext.Provider>
+    );
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
