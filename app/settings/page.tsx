@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useAuth } from "@/lib/auth-context";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -30,64 +29,30 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Loader2, Lock, Bell, Shield, Trash2 } from "lucide-react";
+import { Loader2, Lock, Bell, Shield, Trash2, ExternalLink } from "lucide-react";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user, signOut, loading: authLoading } = useAuth();
-  const [changingPassword, setChangingPassword] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const { user: clerkUser, isLoaded: isClerkLoaded } = useUser();
+  const { openUserProfile } = useClerk();
+  const { signOut, loading: authLoading, isSignedIn } = useAuth();
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/auth/login?redirect=/settings");
+    if (isClerkLoaded && !isSignedIn) {
+      router.push("/sign-in?redirect_url=/settings");
     }
-  }, [authLoading, user, router]);
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (passwordData.newPassword.length < 8) {
-      toast.error("Password must be at least 8 characters");
-      return;
-    }
-
-    setChangingPassword(true);
-
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.updateUser({
-        password: passwordData.newPassword,
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      toast.success("Password updated successfully");
-      setPasswordData({ newPassword: "", confirmPassword: "" });
-    } catch (error) {
-      toast.error("An error occurred");
-    } finally {
-      setChangingPassword(false);
-    }
-  };
+  }, [isClerkLoaded, isSignedIn, router]);
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
   };
 
-  if (authLoading) {
+  const handleManageSecurity = () => {
+    openUserProfile();
+  };
+
+  if (!isClerkLoaded || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -95,7 +60,7 @@ export default function SettingsPage() {
     );
   }
 
-  if (!user) {
+  if (!isSignedIn) {
     return null;
   }
 
@@ -124,51 +89,18 @@ export default function SettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handlePasswordChange} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">New Password</Label>
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      value={passwordData.newPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          newPassword: e.target.value,
-                        })
-                      }
-                      placeholder="Enter new password"
-                    />
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <p className="font-medium">Account Security</p>
+                    <p className="text-sm text-muted-foreground">
+                      Manage your password, two-factor authentication, and connected accounts
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      value={passwordData.confirmPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      placeholder="Confirm new password"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={changingPassword || !passwordData.newPassword}
-                  >
-                    {changingPassword ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
-                      </>
-                    ) : (
-                      "Update Password"
-                    )}
+                  <Button onClick={handleManageSecurity} variant="outline" className="gap-2">
+                    <ExternalLink className="h-4 w-4" />
+                    Manage
                   </Button>
-                </form>
+                </div>
               </CardContent>
             </Card>
 

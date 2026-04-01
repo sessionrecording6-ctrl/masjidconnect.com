@@ -23,6 +23,7 @@ import {
   MessageSquare
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { useUser } from '@clerk/nextjs'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -49,7 +50,8 @@ export function Header() {
   const pathname = usePathname()
   const router = useRouter()
   const { setTheme } = useTheme()
-  const { user, profile, signOut, loading, isAdmin, isShura } = useAuth()
+  const { user: clerkUser, isLoaded: isClerkLoaded } = useUser()
+  const { profile, signOut, loading, isAdmin, isShura, isSignedIn } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -90,7 +92,7 @@ export function Header() {
             {navigation.map((item) => {
               const isActive = pathname === item.href
               // Hide auth-required links for unauthenticated users
-              if (item.requiresAuth && !user) return null
+              if (item.requiresAuth && !isSignedIn) return null
               return (
                 <Link
                   key={item.name}
@@ -112,7 +114,7 @@ export function Header() {
 
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Role-based navigation */}
-          {mounted && user && isShura && (
+          {mounted && isSignedIn && isShura && (
             <Link href="/shura" className="hidden md:block">
               <Button variant="outline" size="sm" className="gap-2 border-teal-600/50 text-teal-600 hover:bg-teal-50 hover:text-teal-700 dark:border-teal-500/50 dark:text-teal-500 dark:hover:bg-teal-950 dark:hover:text-teal-400 rounded-xl">
                 <Shield className="h-4 w-4" />
@@ -120,7 +122,7 @@ export function Header() {
               </Button>
             </Link>
           )}
-          {mounted && user && isAdmin && (
+          {mounted && isSignedIn && isAdmin && (
             <Link href="/admin" className="hidden md:block">
               <Button variant="outline" size="sm" className="gap-2 rounded-xl border-border/60">
                 <LayoutDashboard className="h-4 w-4" />
@@ -157,7 +159,7 @@ export function Header() {
           {/* Auth section */}
           {!loading && (
             <>
-              {user ? (
+              {isSignedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full ring-offset-background transition-all hover:ring-2 hover:ring-primary/20">
@@ -175,7 +177,7 @@ export function Header() {
                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-0.5 opacity-70">
                         {profile?.role || 'Member'} Role
                       </p>
-                      <p className="text-xs text-muted-foreground truncate mt-1.5 opacity-80">{user.email}</p>
+                      <p className="text-xs text-muted-foreground truncate mt-1.5 opacity-80">{clerkUser?.primaryEmailAddress?.emailAddress}</p>
                     </div>
                     <DropdownMenuSeparator className="bg-border/40" />
                     <DropdownMenuItem asChild className="rounded-lg my-0.5">
@@ -205,12 +207,12 @@ export function Header() {
                 </DropdownMenu>
               ) : (
                 <div className="hidden sm:flex sm:gap-2">
-                  <Link href="/auth/login">
+                  <Link href="/sign-in">
                     <Button variant="ghost" size="sm" className="rounded-xl font-medium px-4">
                       Sign In
                     </Button>
                   </Link>
-                  <Link href="/auth/sign-up">
+                  <Link href="/sign-up">
                     <Button size="sm" className="rounded-xl font-bold px-5 shadow-lg shadow-primary/20">
                       Sign Up
                     </Button>
@@ -242,7 +244,7 @@ export function Header() {
           <div className="space-y-1.5 px-4 pb-6 pt-2 bg-background border-b border-border/40 shadow-2xl">
             {navigation.map((item) => {
               const isActive = pathname === item.href
-              if (item.requiresAuth && !user) return null
+              if (item.requiresAuth && !isSignedIn) return null
               return (
                 <Link
                   key={item.name}
@@ -263,7 +265,7 @@ export function Header() {
             
             <div className="my-4 border-t border-border/40" />
 
-            {user && (isShura || isAdmin) && (
+            {isSignedIn && (isShura || isAdmin) && (
               <div className="space-y-1.5 mb-4">
                 <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Management</p>
                 {isShura && (
@@ -290,7 +292,7 @@ export function Header() {
             )}
 
             <div className="space-y-2">
-              {user ? (
+              {isSignedIn ? (
                 <button
                   onClick={() => {
                     handleSignOut()
@@ -304,7 +306,7 @@ export function Header() {
               ) : (
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <Link
-                    href="/auth/login"
+                    href="/sign-in"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-muted-foreground bg-muted hover:bg-muted/80 active:scale-95 transition-all"
                   >
@@ -312,7 +314,7 @@ export function Header() {
                     Sign In
                   </Link>
                   <Link
-                    href="/auth/sign-up"
+                    href="/sign-up"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-primary-foreground bg-primary shadow-lg shadow-primary/20 active:scale-95 transition-all"
                   >
